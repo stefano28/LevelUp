@@ -18,10 +18,24 @@ def increment_xp(active_users):
         for json_user in json_users:
             if(user.id == json_user['id']):
                 json_user['xp'] = json_user['xp'] + 1
+                json_user = check_level(json_user)
+                
     f = open('AppData/users.json', 'w')
-    json.dump(json_users, f)
+    f.write(json.dumps(json_users, indent=4))
     f.close()
 
+def check_level(user):
+    if(user['xp'] < user['max_xp']):
+        return user
+    f = open('AppData/levels.json', 'r')
+    levels = json.load(f)
+    f.close()
+    if(user['level'] < len(levels)):
+        user['level'] += 1
+        for level in levels:
+            if(level['id'] == user['level']):
+                user['max_xp'] = level['max_xp']    
+    return user
 
 def core(guild):
     voice_channels = settings.get_xp_channels(guild)
