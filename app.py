@@ -1,11 +1,10 @@
 import os
-import discord
-from discord.ext import commands
 import asyncio
+import discord
 from dotenv import load_dotenv
-import schedule
-import start
-import leveling
+
+import core.start as start
+import core.leveling as leveling
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -14,7 +13,6 @@ GUILD = os.getenv('DISCORD_GUILD')
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
-
 
 async def update():
     await client.wait_until_ready()

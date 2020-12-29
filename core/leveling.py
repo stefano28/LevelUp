@@ -1,6 +1,6 @@
 
 import discord
-import settings
+import core.settings as settings
 import json
 
 def get_users_in_voice_channels(voice_channels):
@@ -34,7 +34,8 @@ def check_level(user):
         user['level'] += 1
         for level in levels:
             if(level['id'] == user['level']):
-                user['max_xp'] = level['max_xp']    
+                user['max_xp'] = level['max_xp']
+        print("Level Up!!!")
     return user
 
 def core(guild):
