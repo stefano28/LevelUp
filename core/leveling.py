@@ -1,6 +1,7 @@
 
 import discord
 import core.settings as settings
+from models.user import User
 import json
 
 def get_users_in_voice_channels(voice_channels):
@@ -11,22 +12,14 @@ def get_users_in_voice_channels(voice_channels):
     return active_users
 
 def increment_xp(active_users):
-    f = open('AppData/users.json', 'r')
-    json_users = json.load(f)
-    f.close()
     for user in active_users:
-        for json_user in json_users:
-            if(user.id == json_user['id']):
-                json_user['xp'] = json_user['xp'] + 1
-                json_user = check_level(json_user)
-                
-    f = open('AppData/users.json', 'w')
-    f.write(json.dumps(json_users, indent=4))
-    f.close()
+        User.increment_xp(user.id)
+        #check_level(user.id)
 
-def check_level(user):
-    if(user['xp'] < user['max_xp']):
-        return user
+def check_level(user_id):
+    if(User.get_xp(user_id) < User.get_max_xp(user_id)):
+        return
+    
     f = open('AppData/levels.json', 'r')
     levels = json.load(f)
     f.close()
