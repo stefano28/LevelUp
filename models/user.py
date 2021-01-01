@@ -34,11 +34,32 @@ class User:
                 user['xp'] += 1
         Storage.write('users.json', users)
 
+    def increment_level(id):
+        users = Storage.read('users.json')
+        for user in users:
+            if(user['id'] == id):
+                user['level'] += 1
+        Storage.write('users.json', users)
+
+    def get_name(id):
+        users = Storage.read('users.json')
+        for user in users:
+            if(user['id'] == id):
+                return user['name']
+        raise Exception('User not found')
+
     def get_xp(id):
         users = Storage.read('users.json')
         for user in users:
             if(user['id'] == id):
                 return user['xp']
+        raise Exception('User not found')
+
+    def get_level(id):
+        users = Storage.read('users.json')
+        for user in users:
+            if(user['id'] == id):
+                return user['level']
         raise Exception('User not found')
 
     def get_max_xp(id):
@@ -47,3 +68,10 @@ class User:
             if(user['id'] == id):
                 return user['max_xp']
         raise Exception('User not found')
+
+    def set_max_xp(id, max_xp):
+        users = Storage.read('users.json')
+        for user in users:
+            if(user['id'] == id):
+                user['max_xp'] = max_xp
+        Storage.write('users.json', users)

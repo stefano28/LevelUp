@@ -1,37 +1,42 @@
 
 import discord
-import core.settings as settings
 from models.user import User
+from models.level import Level
+from models.setting import Setting
+from models.channel import Channel
+from core.bot import Bot
 import json
 
 def get_users_in_voice_channels(voice_channels):
     active_users = []
     for voice_channel in voice_channels:
-        for user in voice_channel.members:
-            active_users.append(user)
+        if not(Channel.exist(voice_channel.id)):
+            for user in voice_channel.members:
+                active_users.append(user)
     return active_users
 
-def increment_xp(active_users):
+async def increment_xp(active_users):
     for user in active_users:
         User.increment_xp(user.id)
-        #check_level(user.id)
+        await check_level(user.id)
 
-def check_level(user_id):
+async def check_level(user_id):
     if(User.get_xp(user_id) < User.get_max_xp(user_id)):
         return
-    
-    f = open('AppData/levels.json', 'r')
-    levels = json.load(f)
-    f.close()
-    if(user['level'] < len(levels)):
-        user['level'] += 1
-        for level in levels:
-            if(level['id'] == user['level']):
-                user['max_xp'] = level['max_xp']
-        print("Level Up!!!")
-    return user
+    if(User.get_level(user_id) < Level.get_max_level_number()):
+        User.increment_level(user_id)
+        level_number = User.get_level(user_id)
+        level_max_xp = Level.get_max_xp(level_number)
+        User.set_max_xp(user_id, level_max_xp)
+        await levelup_notification(user_id)
 
-def core(guild):
-    voice_channels = settings.get_xp_channels(guild)
+async def levelup_notification(user_id):
+        name = User.get_name(user_id)
+        level = User.get_level(user_id)
+        await Bot.send_message(Setting.get_comunication_channel_id(), '@' + name + ' hai raggiunto il livello ' + str(level))
+
+
+async def core(guild):
+    voice_channels = guild.voice_channels
     active_users = get_users_in_voice_channels(voice_channels)
-    increment_xp(active_users)
+    await increment_xp(active_users)
