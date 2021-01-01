@@ -32,6 +32,12 @@ class Level:
         levels = Storage.read('levels.json')
         return levels
 
+    def get_reward(id):
+        levels = Storage.read('levels.json')
+        for level in levels:
+            if(level['id'] == id):
+                return level['reward']
+
     def get_max_xp(id):
         levels = Storage.read('levels.json')
         for level in levels:

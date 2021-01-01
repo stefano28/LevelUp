@@ -70,10 +70,29 @@ class Bot():
             text += voice_channel.name + ' ' + str(voice_channel.id) + '\n'
         return text
 
+    def get_text_channels():
+        text_channels = Bot.guild.text_channels
+        text = ''
+        for text_channel in text_channels:
+            text += text_channel.name + ' ' + str(text_channel.id) + '\n'
+        return text
+
     def set_comunication_channel_id(comunication_channel_id):
         Setting.set_comunication_channel_id(comunication_channel_id)
 
     async def send_message(channel_id, msg):
-        channel = Bot.client.get_channel(channel_id)
-        print(msg)
-        #await channel.send_message(msg)
+        channel = Bot.guild.get_channel(channel_id)
+        await channel.send(msg)
+
+    async def apply_user_role(user_id, role_id):
+        role = Bot.guild.get_role(role_id)
+        member = Bot.guild.get_member(user_id)
+        await member.add_roles(role)
+
+    async def get_rank(user_id):
+        rank = str(User.get_xp(user_id))
+        return rank
+
+    async def get_level(user_id):
+        level = str(User.get_level(user_id))
+        return level

@@ -72,9 +72,17 @@ class Basic(commands.Cog):
         await ctx.send(Bot.get_voice_channels())
 
     @commands.command()
+    async def get_text_channels(self, ctx):
+        await ctx.send(Bot.get_text_channels())
+
+    @commands.command()
     async def set_comunication_channel(self, ctx, comunication_channel_id):
         Bot.set_comunication_channel_id(comunication_channel_id)
         await ctx.send('Canale di comunicazione principale settato con successo')
+
+    @commands.command()
+    async def rank(self, ctx):
+        await ctx.send(await Bot.get_rank(ctx.message.author.id) + ' XP livello: ' + str(await Bot.get_level(ctx.message.author.id)))
 
 def setup(client):
     client.add_cog(Basic(client))

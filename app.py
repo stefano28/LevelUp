@@ -14,7 +14,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 intents = discord.Intents.default()
 intents.members = True
 
-refresh_rate = 1
+refresh_rate = 60
 
 client= commands.Bot(command_prefix='.', intents=intents)
 
