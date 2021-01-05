@@ -14,11 +14,11 @@ GUILD = os.getenv('DISCORD_GUILD')
 intents = discord.Intents.default()
 intents.members = True
 
-refresh_rate = 60
+refresh_rate = 1
 
-client= commands.Bot(command_prefix='.', intents=intents)
+client= commands.Bot(command_prefix='.', intents=intents, help_command=None)
 
-cogs = ['cogs.basic']
+cogs = ['cogs.basic', 'cogs.user']
 
 async def update():
     await client.wait_until_ready()
@@ -38,6 +38,15 @@ async def on_ready():
         f'{client.user} is connected to the following guild:\n'
         f'{guild.name}(id: {guild.id})'
     )
+
+@client.event
+async def on_member_join(member):
+    Bot.add_users()
+
+@client.event
+async def on_client_error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        await ctx.send("Non hai i permessi necessari per eseguire questo comando")
      
 for cog in cogs:
     client.load_extension(cog)

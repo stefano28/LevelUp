@@ -24,22 +24,37 @@ async def check_level(user_id):
     if(User.get_xp(user_id) < User.get_max_xp(user_id)):
         return
     if(User.get_level(user_id) < Level.get_max_level_number()):
-        User.increment_level(user_id)
-        level_number = User.get_level(user_id)
-        level_max_xp = Level.get_max_xp(level_number)
-        User.set_max_xp(user_id, level_max_xp)
-        await edit_user_role(user_id)
+        while(User.get_xp(user_id) > User.get_max_xp(user_id)):
+            if(User.get_level(user_id) < Level.get_max_level_number()):
+                await levelup_notification(user_id)
+                await edit_user_role(user_id)
+                User.increment_level(user_id)
+                level_number = User.get_level(user_id)
+                level_max_xp = Level.get_max_xp(level_number)
+                User.set_max_xp(user_id, level_max_xp)
+            elif(User.get_level(user_id) == Level.get_max_level_number()):
+                await levelup_notification(user_id)
+                await edit_user_role(user_id)
+                break
+    elif(User.get_xp(user_id) == User.get_max_xp(user_id)):
         await levelup_notification(user_id)
-
+        await edit_user_role(user_id)
+        
 async def edit_user_role(user_id):
     level_id = User.get_level(user_id)
+    if level_id > 1:
+        role_prev_id = Level.get_reward(level_id - 1)
+        user_roles = Bot.get_user_roles(user_id)
+        for role in user_roles:
+            if(role.id == role_prev_id):
+                await Bot.delete_user_role(user_id, role.id)
     role_id = Level.get_reward(level_id)
     await Bot.apply_user_role(user_id, role_id)
 
 async def levelup_notification(user_id):
         name = User.get_name(user_id)
         level = User.get_level(user_id)
-        await Bot.send_message(Setting.get_comunication_channel_id(), '@' + name + ' hai raggiunto il livello ' + str(level))
+        await Bot.send_message(Setting.get_comunication_channel_id(), user_id, ' hai completato il livello ' + str(level) + '!')
 
 async def core(guild):
     voice_channels = guild.voice_channels

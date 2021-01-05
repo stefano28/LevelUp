@@ -7,82 +7,91 @@ class Basic(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    #Start bot
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def start(self, ctx):
         if(Bot.state):
-            await ctx.send('Il bot è già acceso cazzo rompi i coglioni')
+            embed=discord.Embed(title="Levelup", description="levelup è già in funzione", colour = discord.Colour.blue())
+            await ctx.send(embed = embed)
             return
         if(Bot.is_ready()):
             Bot.turn_on()
-            await ctx.send('Levelup - discord leveling bot \nIl bot è stato acceso')
+            embed=discord.Embed(title="Levelup", description="levelup ora è in funzione", colour = discord.Colour.blue())
         else:
-            await ctx.send('Per fare funzionare il bot devi digitare i seguenti comandi (in questo ordine):\n`.add_level max_xp id_ruolo_ricompensa` per aggiungere un livello\n`.add_users` per caricare la lista degli utenti nel bot escludendo dei ruoli (opzionale)')
+            embed=discord.Embed(title="Levelup", description="Il bot non può essere avviato\n.help per la lista degli aiuti", colour = discord.Colour.blue())
+        
+        await ctx.send(embed = embed)
 
-    #Stop bot
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def stop(self, ctx):
         if not(Bot.state):
-            await ctx.send('Il bot è già fermo cazzo rompi i coglioni')
+            await ctx.send('Il bot è già fermo')
             return
         Bot.turn_off()
         await ctx.send('Il bot è stato fermato')
 
-    #Add new level
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def add_level(self, ctx, max_xp, reward):
         if(Bot.state):
-            await ctx.send('Il bot è in funzione, per aggiungere un livello devi prima fermarlo con .stop, testa di cazzo')
+            await ctx.send('Il bot è in funzione, per aggiungere un livello devi prima fermarlo con .stop')
             return
-        if(Bot.add_level(max_xp, reward)):
-            await ctx.send('Livello aggiunto con successo')
+        await Bot.add_level(max_xp, reward)
+        await ctx.send('Livello aggiunto con successo')
 
-    #Remove all levels
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def clear_levels(self, ctx):
         Bot.clear_levels()
         await ctx.send('Livelli eliminati con successo')
 
-    #Get the list of all levels
+    @commands.has_permissions(administrator=True)
+    @commands.command()
+    async def clear_users(self, ctx):
+        Bot.clear_users()
+        await ctx.send('Utenti eliminati con successo')
+
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def levels(self, ctx):
         await ctx.send(Bot.get_levels())
 
-    #Get the list of all roles
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def roles(self, ctx):
         await ctx.send(Bot.get_roles())
 
-    #Add all users escept bots
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def add_users(self, ctx):
         if(Bot.is_levels_empty()):
-            await ctx.send("Devi prima inserire i livelli, faccia di merda")
+            await ctx.send("Devi prima inserire i livelli")
             return
         Bot.add_users()
         await ctx.send("Tutti gli utenti del server tranne i bot sono stati aggiunti con successo")
 
+    @commands.has_permissions(administrator=True)
     @commands.command()
-    async def add_channel(self, ctx, id):
-        Bot.add_channels()
+    async def add_no_xp_channel(self, ctx, id):
+        Bot.add_no_xp_channel(id)
         await ctx.send("Tutti i canali da escludere sono stati aggiunti con successo")
 
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def get_voice_channels(self, ctx):
         await ctx.send(Bot.get_voice_channels())
 
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def get_text_channels(self, ctx):
         await ctx.send(Bot.get_text_channels())
 
+    @commands.has_permissions(administrator=True)
     @commands.command()
     async def set_comunication_channel(self, ctx, comunication_channel_id):
         Bot.set_comunication_channel_id(comunication_channel_id)
         await ctx.send('Canale di comunicazione principale settato con successo')
-
-    @commands.command()
-    async def rank(self, ctx):
-        await ctx.send(await Bot.get_rank(ctx.message.author.id) + ' XP livello: ' + str(await Bot.get_level(ctx.message.author.id)))
 
 def setup(client):
     client.add_cog(Basic(client))

@@ -19,5 +19,5 @@ class Storage:
 
     def write(file_name, data):
         f = open('AppData/' + file_name, 'w')
-        f.write(json.dumps(data, indent=4))
+        f.write(json.dumps(data, indent=4, sort_keys=True))
         f.close()

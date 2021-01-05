@@ -41,6 +41,10 @@ class User:
                 user['level'] += 1
         Storage.write('users.json', users)
 
+    def get_all():
+        users = Storage.read('users.json')
+        return users
+
     def get_name(id):
         users = Storage.read('users.json')
         for user in users:
@@ -74,4 +78,8 @@ class User:
         for user in users:
             if(user['id'] == id):
                 user['max_xp'] = max_xp
+        Storage.write('users.json', users)
+
+    def clear():
+        users = []
         Storage.write('users.json', users)
